@@ -1,0 +1,8 @@
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_ASM_COMPILER
+    CMAKE_ASM_FLAGS
+
+
+cc1: warning: command-line option ‘-Wno-old-style-cast’ is valid for C++/ObjC++ but not for C

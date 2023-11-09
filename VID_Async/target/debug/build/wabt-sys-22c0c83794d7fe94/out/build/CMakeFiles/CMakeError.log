@@ -1,0 +1,60 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/brian/Descargas/VID/VID_Async/target/debug/build/wabt-sys-22c0c83794d7fe94/out/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_d4f2d/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_d4f2d.dir/build.make CMakeFiles/cmTC_d4f2d.dir/build
+gmake[1]: se entra en el directorio '/home/brian/Descargas/VID/VID_Async/target/debug/build/wabt-sys-22c0c83794d7fe94/out/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_d4f2d.dir/src.c.o
+/usr/bin/cc   -ffunction-sections -fdata-sections -fPIC -m64 -DCMAKE_HAVE_LIBC_PTHREAD -o CMakeFiles/cmTC_d4f2d.dir/src.c.o -c /home/brian/Descargas/VID/VID_Async/target/debug/build/wabt-sys-22c0c83794d7fe94/out/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_d4f2d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d4f2d.dir/link.txt --verbose=1
+/usr/bin/cc  -ffunction-sections -fdata-sections -fPIC -m64 -DCMAKE_HAVE_LIBC_PTHREAD -rdynamic CMakeFiles/cmTC_d4f2d.dir/src.c.o -o cmTC_d4f2d 
+/usr/bin/ld: CMakeFiles/cmTC_d4f2d.dir/src.c.o: en la función `main':
+src.c:(.text.main+0x21): referencia a `pthread_create' sin definir
+/usr/bin/ld: src.c:(.text.main+0x2d): referencia a `pthread_detach' sin definir
+/usr/bin/ld: src.c:(.text.main+0x39): referencia a `pthread_cancel' sin definir
+/usr/bin/ld: src.c:(.text.main+0x4a): referencia a `pthread_join' sin definir
+collect2: error: ld returned 1 exit status
+gmake[1]: *** [CMakeFiles/cmTC_d4f2d.dir/build.make:106: cmTC_d4f2d] Error 1
+gmake[1]: se sale del directorio '/home/brian/Descargas/VID/VID_Async/target/debug/build/wabt-sys-22c0c83794d7fe94/out/build/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:140: cmTC_d4f2d/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/brian/Descargas/VID/VID_Async/target/debug/build/wabt-sys-22c0c83794d7fe94/out/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_77b7e/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_77b7e.dir/build.make CMakeFiles/cmTC_77b7e.dir/build
+gmake[1]: se entra en el directorio '/home/brian/Descargas/VID/VID_Async/target/debug/build/wabt-sys-22c0c83794d7fe94/out/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_77b7e.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -ffunction-sections -fdata-sections -fPIC -m64 -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_77b7e.dir/CheckFunctionExists.c.o -c /usr/share/cmake-3.18/Modules/CheckFunctionExists.c
+Linking C executable cmTC_77b7e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_77b7e.dir/link.txt --verbose=1
+/usr/bin/cc  -ffunction-sections -fdata-sections -fPIC -m64 -DCHECK_FUNCTION_EXISTS=pthread_create -rdynamic CMakeFiles/cmTC_77b7e.dir/CheckFunctionExists.c.o -o cmTC_77b7e  -lpthreads 
+/usr/bin/ld: no se puede encontrar -lpthreads: No existe el fichero o el directorio
+collect2: error: ld returned 1 exit status
+gmake[1]: *** [CMakeFiles/cmTC_77b7e.dir/build.make:106: cmTC_77b7e] Error 1
+gmake[1]: se sale del directorio '/home/brian/Descargas/VID/VID_Async/target/debug/build/wabt-sys-22c0c83794d7fe94/out/build/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:140: cmTC_77b7e/fast] Error 2
+
+
+
