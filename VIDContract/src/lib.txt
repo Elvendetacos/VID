@@ -1,0 +1,106 @@
+#![no_std]
+
+use gmeta::Metadata;
+use hashbrown::HashMap;
+use io::*;
+use gstd::{async_main, msg, prelude::*, ActorId};
+
+#[cfg(feature = "binary-vendor")]
+include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
+
+
+struct NID {  
+    actors: HashMap<ActorId, u128>,
+}
+
+impl NID {
+    async fn creator(&mut self, transaction_id: u64, token_metadata: TokenMetadata){
+        let _currentstate = state_mut();
+        let address_ft = addresnft_state_mut();  
+        let payload = NFTAction::Mint { transaction_id, token_metadata };
+        let result = msg::send_for_reply_as::<_, Status>(address_ft.nft_conection,payload,0,0).expect("Error in sending a message").await;
+        let _ = match result {
+            Ok(event) => match event {
+                Status::Ok => Ok(()),
+                _ => Err(()),
+            },
+            Err(_) => Err(()),
+        };
+    }
+}
+
+static mut ACTORS:Option<NID> = None;
+
+static mut STATE:Option<HashMap<ActorId, u128>> = None;
+
+static mut ADDRESSNFT:Option<VidConection> = None;
+
+fn actors_state_mut() -> &'static mut NID  {
+    unsafe { ACTORS.get_or_insert(Default::default()) }
+}
+
+
+fn state_mut() -> &'static mut HashMap<ActorId,u128> {
+    let state = unsafe { STATE.as_mut()};
+
+    unsafe { state.unwrap_unchecked() }
+
+}
+
+fn addresnft_state_mut() -> &'static mut VidConection {
+    let addressft = unsafe { ADDRESSNFT.as_mut()};
+
+    unsafe { addressft.unwrap_unchecked() }
+
+}
+
+#[no_mangle]
+extern "C" fn init () {
+    let config: VidConection = msg::load().expect("Unable to decode InitFT");
+    let _actors = NID {
+        ..Default::default()
+    };
+    if config.nft_conection.is_zero() {
+        panic!("FT program address can't be 0");
+    }
+    let initft: VidConection = VidConection {
+        nft_conection: config.nft_conection
+    };
+    unsafe {
+        ADDRESSNFT = Some(initft);
+    }
+   unsafe { STATE = Some(HashMap::new())}
+
+}
+
+#[async_main]
+async fn main(){
+
+    let action: Actions = msg::load().expect("Could not load Action");
+
+    let actors = unsafe {ACTORS.get_or_insert(NID::default())};
+
+    match action {
+        Actions::TokeCreate(u64, token_metadata) =>  {
+                actors.creator(u64, token_metadata).await;
+            }
+        };
+}
+
+#[no_mangle]
+extern "C" fn state() {
+ 
+    let state: <NftMetadata as Metadata>::State =
+        state_mut().iter().map(|(k, v)| (*k, *v)).collect();
+     
+    msg::reply(state, 0).expect("failed to encode or reply from `state()`");
+}
+
+
+
+#[derive(Decode, Encode, TypeInfo)]
+#[codec(crate = gstd::codec)]
+#[scale_info(crate = gstd::scale_info)]
+pub struct VidConection {
+    pub nft_conection : ActorId,
+}
